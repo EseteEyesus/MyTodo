@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Task Manager App
+
+A simple task management web app built with Next.js, Supabase, and Tailwind CSS with dark mode support.
+
+## Features
+
+- User authentication (sign up, sign in, sign out) using Supabase Auth
+- Create, update, delete, and mark tasks as complete
+- Tasks linked to authenticated users only
+- Real-time UI updates (optional to add)
+- Responsive design with light/dark mode toggle
+
+## Tech Stack
+
+- Next.js 13 (app router)
+- React (with hooks)
+- Supabase (PostgreSQL + Auth)
+- Tailwind CSS (including dark mode)
+- TypeScript
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
+- Node.js (v16 or later recommended)
+- Supabase account with project created
+- Supabase URL and anon/public API key
+
+### Setup
+
+1. Clone the repo
+
+   ```bash
+   git clone https://github.com/yourusername/task-manager.git
+   cd task-manager
+Install dependencies
+
+bash
+Copy code
+npm install
+Create .env.local file with your Supabase credentials
+
+ini
+Copy code
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+Run the development server
+
+bash
+Copy code
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Open http://localhost:3000 in your browser
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Supabase Database
+Make sure you have a table tasks with columns:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+id (UUID, primary key, default gen_random_uuid())
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+title (text)
 
-## Learn More
+description (text)
 
-To learn more about Next.js, take a look at the following resources:
+completed (boolean, default false)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+user_id (UUID, foreign key referencing auth.users.id)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+created_at (timestamp, default now())
 
-## Deploy on Vercel
+Enable Row Level Security (RLS) on the tasks table and add policy to allow users to manage their own tasks.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Dark Mode
+Toggle dark mode by clicking the moon/sun icon (if implemented). Uses Tailwind CSS dark: variant.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+1. **Initialize Git (if not already):**
+
+   ```bash
+   git init
