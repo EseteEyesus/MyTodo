@@ -1,103 +1,343 @@
-import Image from "next/image";
+// "use client";
 
-export default function Home() {
+// import { useState } from "react";
+// import { supabase } from "@/lib/supabase-client";
+// import { useRouter } from "next/navigation";
+
+// export default function AuthForm() {
+//   const router = useRouter();
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [isSignUp, setIsSignUp] = useState(false);
+//   const [error, setError] = useState("");
+//   const [loading, setLoading] = useState(false);
+
+//   // Simple email validation regex
+//   const validateEmail = (email: string) => {
+//     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     return re.test(email);
+//   };
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+
+//     const trimmedEmail = email.trim();
+
+//     if (!trimmedEmail || !password) {
+//       setError("Email and password are required.");
+//       return;
+//     }
+
+//     if (!validateEmail(trimmedEmail)) {
+//       setError("Please enter a valid email address.");
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       if (isSignUp) {
+//         const { error } = await supabase.auth.signUp({
+//           email: trimmedEmail,
+//           password,
+//         });
+//         if (error) throw error;
+
+//         alert(
+//           "Account created! Please check your email to confirm before logging in."
+//         );
+//         setIsSignUp(false);
+//         setEmail("");
+//         setPassword("");
+//       } else {
+//         const { error } = await supabase.auth.signInWithPassword({
+//           email: trimmedEmail,
+//           password,
+//         });
+//         if (error) throw error;
+
+//         router.push("/tasks");
+//       }
+//     } catch (err: any) {
+//       console.error("Auth error:", err);
+//       setError(err.message || "Something went wrong.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+//       <form
+//         onSubmit={handleSubmit}
+//         className="bg-white p-6 rounded-lg shadow-md max-w-md w-full"
+//         aria-label={isSignUp ? "Sign Up Form" : "Sign In Form"}
+//       >
+//         <h2 className="text-2xl font-bold mb-6 text-center">
+//           {isSignUp ? "Sign Up" : "Sign In"}
+//         </h2>
+//         {error && (
+//           <p className="text-red-600 text-sm mb-4 text-center" role="alert">
+//             {error}
+//           </p>
+//         )}
+//         <label htmlFor="email" className="sr-only">
+//           Email address
+//         </label>
+//         <input
+//           id="email"
+//           type="email"
+//           placeholder="Email"
+//           value={email}
+//           onChange={(e) => setEmail(e.target.value)}
+//           className="border border-gray-300 rounded px-4 py-2 mb-4 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+//           autoComplete="email"
+//           required
+//           disabled={loading}
+//         />
+//         <label htmlFor="password" className="sr-only">
+//           Password
+//         </label>
+//         <input
+//           id="password"
+//           type="password"
+//           placeholder="Password"
+//           value={password}
+//           onChange={(e) => setPassword(e.target.value)}
+//           className="border border-gray-300 rounded px-4 py-2 mb-4 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+//           autoComplete={isSignUp ? "new-password" : "current-password"}
+//           required
+//           disabled={loading}
+//         />
+//         <button
+//           type="submit"
+//           className={`bg-indigo-600 text-white py-2 rounded w-full hover:bg-indigo-700 transition ${
+//             loading ? "opacity-50 cursor-not-allowed" : ""
+//           }`}
+//           disabled={loading}
+//         >
+//           {loading
+//             ? isSignUp
+//               ? "Signing up..."
+//               : "Signing in..."
+//             : isSignUp
+//             ? "Sign Up"
+//             : "Sign In"}
+//         </button>
+//         <p
+//           className="mt-4 text-center text-indigo-600 cursor-pointer hover:underline select-none"
+//           onClick={() => {
+//             if (loading) return;
+//             setIsSignUp(!isSignUp);
+//             setError("");
+//           }}
+//           role="button"
+//           tabIndex={0}
+//           onKeyDown={(e) => {
+//             if (e.key === "Enter" || e.key === " ") {
+//               e.preventDefault();
+//               if (!loading) setIsSignUp(!isSignUp);
+//             }
+//           }}
+//         >
+//           {isSignUp
+//             ? "Already have an account? Sign In"
+//             : "Don't have an account? Sign Up"}
+//         </p>
+//       </form>
+//     </div>
+//   );
+// }
+"use client";
+
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase-client";
+import { useRouter } from "next/navigation";
+
+export default function AuthForm() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    // On mount, check if user prefers dark mode
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    setDarkMode(prefersDark);
+  }, []);
+
+  // Toggle dark mode and update <html> class
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
+    if (!validateEmail(trimmedEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email: trimmedEmail,
+          password,
+        });
+        if (error) throw error;
+
+        alert(
+          "Account created! Please check your email to confirm before logging in."
+        );
+        setIsSignUp(false);
+        setEmail("");
+        setPassword("");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: trimmedEmail,
+          password,
+        });
+        if (error) throw error;
+
+        router.push("/tasks");
+      }
+    } catch (err: any) {
+      console.error("Auth error:", err);
+      setError(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 p-6">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 transition-colors duration-300">
+        {/* Dark mode toggle */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            aria-label="Toggle Dark Mode"
+            className="focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {darkMode ? (
+              <span className="text-yellow-400 text-2xl">☀️</span>
+            ) : (
+              <span className="text-gray-700 text-2xl">🌙</span>
+            )}
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-900 dark:text-gray-100">
+          {isSignUp ? "Sign Up" : "Sign In"}
+        </h2>
+
+        {error && (
+          <p className="text-red-600 text-center mb-4 select-text" role="alert">
+            {error}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <label htmlFor="email" className="sr-only">
+            Email address
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+            disabled={loading}
+            className="w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+
+          <label htmlFor="password" className="sr-only">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete={isSignUp ? "new-password" : "current-password"}
+            required
+            disabled={loading}
+            className="w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-md text-white font-semibold ${
+              loading
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
+            } transition`}
+          >
+            {loading
+              ? isSignUp
+                ? "Signing up..."
+                : "Signing in..."
+              : isSignUp
+              ? "Sign Up"
+              : "Sign In"}
+          </button>
+        </form>
+
+        <p
+          className="mt-6 text-center text-indigo-600 cursor-pointer hover:underline select-none"
+          onClick={() => {
+            if (!loading) {
+              setIsSignUp(!isSignUp);
+              setError("");
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if ((e.key === "Enter" || e.key === " ") && !loading) {
+              e.preventDefault();
+              setIsSignUp(!isSignUp);
+              setError("");
+            }
+          }}
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {isSignUp
+            ? "Already have an account? Sign In"
+            : "Don't have an account? Sign Up"}
+        </p>
+      </div>
     </div>
   );
 }
