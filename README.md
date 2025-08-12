@@ -71,18 +71,6 @@ Enable Row Level Security (RLS) on the tasks table and add policy to allow users
 Dark Mode
 Toggle dark mode by clicking the moon/sun icon (if implemented). Uses Tailwind CSS dark: variant.
 
-License
-MIT License
-
-Author
-Your Name - your.email@example.com
-
-yaml
-Copy code
-
----
-
-# How to add your project to GitHub
 
 1. **Initialize Git (if not already):**
 
